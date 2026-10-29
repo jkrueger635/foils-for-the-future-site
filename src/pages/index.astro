@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import WhatGoesIn from '../components/WhatGoesIn.astro';
+import WhereMoneyGoes from '../components/WhereMoneyGoes.astro';
+import SuiteRental from '../components/SuiteRental.astro';
+import RequestForm from '../components/RequestForm.astro';
+import Recruit from '../components/Recruit.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+---
+<Base title={site.title}>
+  <Header />
+  <Hero />
+  <HowItWorks />
+  <WhatGoesIn />
+  <WhereMoneyGoes />
+  <SuiteRental />
+  <RequestForm />
+  <Recruit />
+  <Footer />
+</Base>

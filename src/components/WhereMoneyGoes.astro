@@ -1,0 +1,15 @@
+---
+import { money } from '../data/site';
+---
+<section class="money">
+  <div class="wrap two" style="align-items:start">
+    <div>
+      <h2 class="h2" style="margin-bottom:24px">{money.title}</h2>
+      {money.paragraphs.map((p) => <p>{p}</p>)}
+    </div>
+    <div class="details">
+      <h3>{money.detailsTitle}</h3>
+      {money.details.map(([k, v]) => <p><strong>{k}:</strong> {v}</p>)}
+    </div>
+  </div>
+</section>

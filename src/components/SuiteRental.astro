@@ -1,0 +1,12 @@
+---
+import { suite, site } from '../data/site';
+---
+<section class="suite">
+  <div class="wrap two" style="align-items:center">
+    <h2 class="h2">{suite.title}</h2>
+    <div>
+      <p>{suite.body}</p>
+      <a href={site.requestHref} class="btn btn--lavender">{suite.cta}</a>
+    </div>
+  </div>
+</section>

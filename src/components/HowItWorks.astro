@@ -1,0 +1,20 @@
+---
+import { how } from '../data/site';
+---
+<section class="how">
+  <div class="wrap">
+    <h2 class="h2">{how.title}</h2>
+    <p class="lead">{how.intro}</p>
+    <div class="steps">
+      {how.steps.map((s, i) => (
+        <div class="step">
+          <div class="step__in">
+            <div class="step__n">{i + 1}</div>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,34 @@
+---
+import { request } from '../data/site';
+---
+<section id="request" class="request">
+  <div class="wrap wrap--narrow">
+    <h2 class="h2">{request.title}</h2>
+    <p class="lead">{request.intro}</p>
+    <form id="request-form" novalidate>
+      <div class="fields">
+        <div class="fld">
+          <label for="need">What do you need?</label>
+          <select id="need" name="need">{request.needs.map((n) => <option>{n}</option>)}</select>
+        </div>
+        <div class="fld"><label for="loc">Salon or building name</label><input id="loc" name="location" type="text" /></div>
+        <div class="fld"><label for="name">Your name</label><input id="name" name="name" type="text" /></div>
+        <div class="fld"><label for="contact">Email or phone</label><input id="contact" name="contact" type="text" /></div>
+        <div class="fld fld--full"><label for="addr">Address</label><input id="addr" name="address" type="text" /></div>
+      </div>
+      <div class="request__actions">
+        <button type="submit" class="btn btn--plum">{request.submit}</button>
+        <p id="request-note" class="request__note" role="status" hidden>{request.previewNote}</p>
+      </div>
+    </form>
+  </div>
+</section>
+<script>
+  // Preview only. Replace this with a real submit once the form is connected (see README).
+  const form = document.getElementById('request-form');
+  const note = document.getElementById('request-note');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (note) note.hidden = false;
+  });
+</script>
