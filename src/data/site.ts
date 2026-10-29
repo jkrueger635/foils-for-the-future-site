@@ -72,7 +72,7 @@ export const upgrade = {
     { label: 'Aluminum cans', value: '55¢', unit: 'per pound', pct: 100 },
   ],
   pricingNote: 'Current pricing. We will update as pricing changes.',
-  imageAlt: 'The Together We Can collection box, shown at an angle with the illustrated SOHO Hair Academy wrap on top and a lavender panel reading Together We Can',
+  imageAlt: 'The Together We Can collection box, shown at an angle with the illustrated SOHO Hair Academy wrap on top and a lavender panel reading Together We Can, with a drawing of an aluminum can and the line "Your cans. A local recycler. A SOHO scholarship."',
   ctaLead: 'Ready to upgrade your participation?',
   ctaNote: "We'll deliver the new box and keep the free pickup just as simple as before.",
   cta: 'Request the new box',
