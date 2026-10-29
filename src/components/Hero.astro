@@ -1,10 +1,9 @@
 ---
 import { hero, site } from '../data/site';
-const swatches = ['#DEC7E0', '#F2E0D9', '#9E71AD', '#A99388', '#633E70', '#4A3E3E'];
 ---
 <section class="hero">
   <div class="wrap hero__grid">
-    <div>
+    <div class="hero__text">
       <h1>{hero.headline[0]}<br />{hero.headline[1]}</h1>
       <p class="hero__sub">{hero.subhead}</p>
       <p class="hero__body">{hero.body}</p>
@@ -12,13 +11,10 @@ const swatches = ['#DEC7E0', '#F2E0D9', '#9E71AD', '#A99388', '#633E70', '#4A3E3
         <a href={site.requestHref} class="btn btn--petal">{hero.primaryCta}</a>
         <a href={site.requestHref} class="btn btn--ghost">{hero.secondaryCta}</a>
       </div>
-      <p class="hero__tag">{site.tagline}</p>
+      <p class="hero__tag">{site.tagline.replace('. ', '.\n')}</p>
     </div>
     <div class="hero__img">
-      <img src="/images/foil-box-front.jpg" alt={hero.imageAlt} width="1500" height="1800" />
+      <img src="/images/2026-10-29-foil-box-angled.jpg" alt={hero.imageAlt} width="1500" height="1800" />
     </div>
-  </div>
-  <div class="swatches" aria-hidden="true">
-    {swatches.map((c) => <span style={`background:${c}`} />)}
   </div>
 </section>

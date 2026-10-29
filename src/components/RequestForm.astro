@@ -1,34 +1,120 @@
 ---
-import { request } from '../data/site';
+import { request, TURNSTILE_PROD_KEY, TURNSTILE_DEV_KEY } from '../data/site';
+const siteKey = import.meta.env.DEV ? TURNSTILE_DEV_KEY : TURNSTILE_PROD_KEY;
+if (!import.meta.env.DEV && siteKey.startsWith('REPLACE_')) {
+  throw new Error('Set TURNSTILE_PROD_KEY in src/data/site.ts to the real Turnstile Site Key before building.');
+}
 ---
 <section id="request" class="request">
   <div class="wrap wrap--narrow">
     <h2 class="h2">{request.title}</h2>
     <p class="lead">{request.intro}</p>
-    <form id="request-form" novalidate>
+    <form id="request-form" novalidate data-sitekey={siteKey}>
       <div class="fields">
         <div class="fld">
           <label for="need">What do you need?</label>
           <select id="need" name="need">{request.needs.map((n) => <option>{n}</option>)}</select>
         </div>
-        <div class="fld"><label for="loc">Salon or building name</label><input id="loc" name="location" type="text" /></div>
+        <div class="fld">
+          <label for="upgrade">{request.upgradeLabel}</label>
+          <select id="upgrade" name="upgrade">{request.upgradeOptions.map((o) => <option>{o}</option>)}</select>
+        </div>
         <div class="fld"><label for="name">Your name</label><input id="name" name="name" type="text" /></div>
-        <div class="fld"><label for="contact">Email or phone</label><input id="contact" name="contact" type="text" /></div>
+        <div class="fld"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" /></div>
+        <div class="fld"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" /></div>
+        <div class="fld"><label for="loc">Salon, suite or building name</label><input id="loc" name="location" type="text" /></div>
         <div class="fld fld--full"><label for="addr">Address</label><input id="addr" name="address" type="text" /></div>
+        <fieldset class="fld fld--full days">
+          <legend>Open days</legend>
+          <div class="days__list">
+            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((d) => (
+              <label class="day"><input type="checkbox" name="open_days" value={d} />{d}</label>
+            ))}
+          </div>
+        </fieldset>
       </div>
+      <div class="hp" aria-hidden="true">
+        <label for="website">Leave this field empty</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <div id="turnstile" class="request__turnstile"></div>
       <div class="request__actions">
         <button type="submit" class="btn btn--plum">{request.submit}</button>
-        <p id="request-note" class="request__note" role="status" hidden>{request.previewNote}</p>
+        <p id="request-note" class="request__note" role="status" aria-live="polite" hidden></p>
       </div>
     </form>
   </div>
 </section>
-<script>
-  // Preview only. Replace this with a real submit once the form is connected (see README).
+<script define:vars={{ msg: { sending: request.sending, success: request.success, invalid: request.errorInvalid, turnstile: request.errorTurnstile, generic: request.errorGeneric } }}>
   const form = document.getElementById('request-form');
   const note = document.getElementById('request-note');
-  form?.addEventListener('submit', (e) => {
+  const box = document.getElementById('turnstile');
+  const button = form.querySelector('button[type="submit"]');
+  let widgetId = null;
+  let loading = false;
+
+  // Load Turnstile only when the form is near view or touched.
+  function loadTurnstile() {
+    if (loading) return;
+    loading = true;
+    window.__tsReady = () => {
+      widgetId = window.turnstile.render(box, { sitekey: form.dataset.sitekey });
+    };
+    const s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__tsReady';
+    s.async = true;
+    document.head.appendChild(s);
+  }
+  new IntersectionObserver((entries, obs) => {
+    if (entries.some((e) => e.isIntersecting)) { loadTurnstile(); obs.disconnect(); }
+  }, { rootMargin: '600px' }).observe(form);
+  form.addEventListener('focusin', loadTurnstile);
+
+  function say(text, ok) {
+    note.textContent = text;
+    note.hidden = false;
+    note.dataset.state = ok ? 'ok' : 'error';
+  }
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (note) note.hidden = false;
+    const fd = new FormData(form);
+    const body = {
+      need: fd.get('need'),
+      upgrade: fd.get('upgrade'),
+      name: fd.get('name'),
+      email: fd.get('email'),
+      phone: fd.get('phone'),
+      location: fd.get('location'),
+      address: fd.get('address'),
+      open_days: fd.getAll('open_days'),
+      website: fd.get('website'),
+      turnstile: fd.get('cf-turnstile-response'),
+    };
+    if (!String(body.name || '').trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(body.email || '').trim())) {
+      say(msg.invalid, false);
+      return;
+    }
+    if (!body.turnstile) {
+      loadTurnstile();
+      say(msg.turnstile, false);
+      return;
+    }
+    button.disabled = true;
+    say(msg.sending, true);
+    try {
+      const res = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+      const out = await res.json().catch(() => ({}));
+      if (res.ok && out.ok) {
+        form.reset();
+        say(msg.success, true);
+      } else {
+        say(out.error === 'invalid' ? msg.invalid : out.error === 'turnstile' ? msg.turnstile : msg.generic, false);
+      }
+    } catch {
+      say(msg.generic, false);
+    }
+    if (widgetId !== null && window.turnstile) window.turnstile.reset(widgetId);
+    button.disabled = false;
   });
 </script>

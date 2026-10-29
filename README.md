@@ -35,11 +35,17 @@ Anything in `[brackets]` in `site.ts` is a placeholder that still needs a real a
 - Do not name Green Circle in print.
 - Do not mention FAFSA or federal aid for the Nebraska campus.
 
-## Connecting the form
+## The request form
 
-The request form is a preview. It shows a "not connected" note and sends nothing. To connect it, replace the script
-at the bottom of `src/components/RequestForm.astro` with a submit to your form service (for example Formspree,
-Netlify Forms, or your own endpoint), then update `request.previewNote` in `site.ts`.
+The form posts to `/api/contact` (`functions/api/contact.js`, a Cloudflare Pages Function). It checks the origin, a hidden
+honeypot field, the fields, and Cloudflare Turnstile, then emails the request through Resend with `reply_to` set to the
+visitor. Under `npm run dev` there is no function, so submitting shows the error message; test the real thing on a
+Cloudflare Pages preview URL.
+
+Setup: put the public Turnstile Site Key in `TURNSTILE_PROD_KEY` in `src/data/site.ts` (the build stops until you do), and add
+these Secrets in the Pages project (Production and Preview): `TURNSTILE_SECRET`, `RESEND_API_KEY`, `MAIL_TO`, `MAIL_FROM`,
+`SITE_NAME`, `ALLOWED_HOSTS`. `ALLOWED_HOSTS` is comma-separated and accepts `*.foils-for-the-future.pages.dev` for previews.
+Never commit keys. `.dev.vars.example` shows the names. Run the function tests with `node --test tests/contact.test.mjs`.
 
 ## Deploying
 

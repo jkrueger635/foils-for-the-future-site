@@ -1,0 +1,8 @@
+# Local values for `wrangler pages dev`. Copy to .dev.vars (git-ignored). Never commit real keys.
+# Turnstile test secret that always passes:
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+RESEND_API_KEY=re_replace_me
+MAIL_TO=you@example.com
+MAIL_FROM=Foils For The Future <foils@sohohairacademy.com>
+SITE_NAME=Foils For The Future
+ALLOWED_HOSTS=localhost:4871,localhost:8788

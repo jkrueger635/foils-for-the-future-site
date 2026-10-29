@@ -1,0 +1,36 @@
+---
+import { upgrade, site } from '../data/site';
+---
+<section class="upgrade">
+  <div class="wrap">
+    <div class="upgrade__grid">
+      <div class="upgrade__head">
+        <h2 class="h2">{upgrade.title}</h2>
+        <p class="upgrade__sub">{upgrade.subtitle}</p>
+      </div>
+      <div class="upgrade__img">
+        <img src="/images/2026-10-29-together-we-can-box.jpg" alt={upgrade.imageAlt} width="1500" height="1800" loading="lazy" />
+      </div>
+      <div class="upgrade__body">
+        {upgrade.paragraphs.map((p) => <p class="upgrade__p">{p}</p>)}
+        <ul class="rates">
+          {upgrade.compare.map((r) => (
+            <li>
+              <span class="rates__label">{r.label}</span>
+              <span class="rates__bar" aria-hidden="true"><span style={`width:${r.pct}%`} /></span>
+              <span class="rates__val"><strong>{r.value}</strong> {r.unit}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="upgrade__fine">{upgrade.pricingNote}</p>
+      </div>
+    </div>
+    <div class="upgrade__cta">
+      <div>
+        <p class="upgrade__ask">{upgrade.ctaLead}</p>
+        <p class="upgrade__note">{upgrade.ctaNote}</p>
+      </div>
+      <a href={site.requestHref} class="btn btn--petal">{upgrade.cta}</a>
+    </div>
+  </div>
+</section>
